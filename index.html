@@ -799,3 +799,31 @@
     </script>
 </body>
 </html>
+{
+  "project": "house shelf",
+  "version": "1.0.0-final",
+  "description": "空の本棚からスタートし、長編シリーズ（最大500巻）の抜け巻管理・トーン統一カラーカスタム・リアルな3D本棚表示を備えた完全版Webアプリケーション",
+  "features": {
+    "bookshelf_display": {
+      "initial_state": "empty",
+      "alignment": "left-packed",
+      "overflow_handling": "shelf-collision-fixed",
+      "visuals": "3D volumetric wooden shelves with realistic depth and lighting"
+    },
+    "volume_management": {
+      "max_volumes": 500,
+      "tab_ranges": ["1-50", "51-100", "101-200", "201-300", "301-400", "401-500"],
+      "missing_volume_support": "individual checkbox toggle with quick-select controls (all/clear/even/odd)"
+    },
+    "color_palette": {
+      "tone": "soft earthy dust pastel",
+      "presets": [
+        "#A2B9A6", "#D8A7B1", "#E0896C", "#E7C169", 
+        "#8FA3B8", "#B1A6C7", "#D5C5B0", "#5C6B73"
+      ],
+      "custom_picker": true
+    },
+    "storage": "localStorage (JSON format)"
+  },
+  "deliverable": "画面上のプレビューエリアにて完全版HTMLアプリケーションをご利用いただけます。"
+}
