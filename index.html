@@ -54,7 +54,6 @@
             overflow-x: hidden;
         }
 
-        /* 3D Bookshelf Frame & Containment */
         .perspective-container {
             perspective: 1000px;
             perspective-origin: 50% 30%;
@@ -90,14 +89,13 @@
             border-radius: 4px;
         }
 
-        /* Spine styling with absolute heights and tight left alignment */
         .shelf-books-container {
             display: flex;
             align-items: flex-end;
-            justify-content: flex-start; /* Left-aligned packing */
+            justify-content: flex-start;
             gap: 2px;
             padding: 0 16px;
-            height: 165px; /* Fixed height to prevent overlapping shelf above */
+            height: 165px;
             overflow-x: auto;
             position: relative;
             z-index: 10;
@@ -114,7 +112,6 @@
             box-shadow: -3px 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        /* Top surface of spine (prevents clipping illusion) */
         .book-spine::before {
             content: '';
             position: absolute;
@@ -123,7 +120,6 @@
             border-radius: 3px 6px 0 0;
         }
 
-        /* Pages edge simulation on the right */
         .book-spine::after {
             content: '';
             position: absolute;
@@ -154,18 +150,15 @@
             text-orientation: mixed;
         }
 
-        /* Custom Scrollbar */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Color Picker Radio Buttons */
         .color-radio:checked + label {
             transform: scale(1.15);
             ring: 3px rgba(136, 164, 124, 0.5);
             border-color: #5A4637;
         }
 
-        /* Volume Box Checkbox Grid */
         .vol-checkbox:checked + label {
             background-color: #88A47C;
             color: white;
@@ -370,7 +363,7 @@
                     </div>
                     <div>
                         <label class="text-xs font-bold text-warmBrown/80 block mb-1">最新刊行数 (全何巻まである？)</label>
-                        <input type="number" id="form-max-vol" min="1" max="100" value="20" required class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
+                        <input type="number" id="form-max-vol" min="1" max="500" value="20" required class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
                     </div>
                 </div>
 
@@ -454,7 +447,6 @@
 
     <!-- Application Script Logic -->
     <script>
-        // Preset Auto-suggestion database
         const presetCandidates = [
             { title: '名探偵コナン', maxVol: 105, genre: 'マンガ', ownedStr: '1-105', desc: '見た目は子供、頭脳は大人！難事件を解き明かす名作。', color: '#88A47C' },
             { title: '葬送のフリーレン', maxVol: 13, genre: 'マンガ', desc: '魔王討伐後の勇者一行の後日譚を描くファンタジー。', color: '#FF9AA2' },
@@ -463,7 +455,7 @@
             { title: 'ダンジョン飯', maxVol: 14, genre: 'マンガ', desc: 'モンスターを調理して食べる迷宮グルメアドベンチャー。', color: '#E8C5A8' },
             { title: '薬屋のひとりごと', maxVol: 13, genre: 'マンガ', desc: '後宮の毒味役が難事件を解決するミステリー。', color: '#C7CEEA' },
             { title: '変な家', maxVol: 2, genre: '小説', desc: '間取り図に隠された恐ろしい真相に迫る話題作。', color: '#8D6242' },
-            { title: 'ONE PIECE', maxVol: 108, genre: 'マンガ', desc: '大海賊時代を舞台にルフィが海賊王を目指す大冒険！', color: '#FF9AA2' }
+            { title: 'ONE PIECE', maxVol: 111, genre: 'マンガ', desc: '大海賊時代を舞台にルフィが海賊王を目指す大冒険！', color: '#FF9AA2' }
         ];
 
         let books = JSON.parse(localStorage.getItem('house_shelf_user_books')) || [];
@@ -481,14 +473,98 @@
             localStorage.setItem('house_shelf_user_books', JSON.stringify(books));
         }
 
-        // Helper: Parse range input like "1-5, 7, 9-12" into Set of numbers
+        function openAddModal() {
+            document.getElementById('add-modal').classList.remove('hidden');
+            document.getElementById('form-date').valueAsDate = new Date();
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('suggest-box').classList.add('hidden');
+        }
+
+        function onTitleInput(val) {
+            const box = document.getElementById('suggest-box');
+            if (!val.trim()) {
+                box.classList.add('hidden');
+                return;
+            }
+            const matches = presetCandidates.filter(p => p.title.toLowerCase().includes(val.toLowerCase()));
+            if (matches.length === 0) {
+                box.classList.add('hidden');
+                return;
+            }
+            box.innerHTML = matches.map(m => `
+                <div onclick="selectPreset('${m.title}', ${m.maxVol}, '${m.genre}', '${m.desc}', '${m.color}')" class="p-3 hover:bg-pastelCream cursor-pointer text-xs flex items-center justify-between">
+                    <div>
+                        <strong class="text-warmBrown">${m.title}</strong>
+                        <span class="text-[10px] text-warmBrown/50 ml-2">全${m.maxVol}巻 (${m.genre})</span>
+                    </div>
+                    <span class="text-[10px] text-sage font-bold">選ぶ <i class="fa-solid fa-chevron-right ml-1"></i></span>
+                </div>
+            `).join('');
+            box.classList.remove('hidden');
+        }
+
+        function selectPreset(title, maxVol, genre, desc, color) {
+            document.getElementById('form-title').value = title;
+            document.getElementById('form-max-vol').value = maxVol;
+            document.getElementById('form-genre').value = genre;
+            document.getElementById('form-desc').value = desc;
+            document.getElementById('form-owned-range').value = `1-${maxVol}`;
+            
+            const colorRadios = document.getElementsByName('spineColor');
+            for (let r of colorRadios) {
+                if (r.value === color) r.checked = true;
+            }
+            document.getElementById('suggest-box').classList.add('hidden');
+        }
+
+        function submitNewBook(e) {
+            e.preventDefault();
+            const title = document.getElementById('form-title').value.trim();
+            const maxVol = parseInt(document.getElementById('form-max-vol').value) || 1;
+            const genre = document.getElementById('form-genre').value;
+            const rangeStr = document.getElementById('form-owned-range').value.trim();
+            const date = document.getElementById('form-date').value;
+            const release = document.getElementById('form-release').value;
+            const desc = document.getElementById('form-desc').value.trim();
+            
+            let color = '#88A47C';
+            const radios = document.getElementsByName('spineColor');
+            for (let r of radios) {
+                if (r.checked) color = r.value;
+            }
+
+            const ownedSet = parseOwnedVolumes(rangeStr, maxVol);
+            const newBook = {
+                id: 'book_' + Date.now(),
+                title,
+                maxVol,
+                genre,
+                ownedArray: Array.from(ownedSet),
+                date,
+                release,
+                desc,
+                color,
+                width: Math.min(32 + Math.floor(maxVol / 10) * 3, 48),
+                height: Math.min(120 + Math.floor(maxVol / 5), 150)
+            };
+
+            books.unshift(newBook);
+            saveBooks();
+            closeAddModal();
+            e.target.reset();
+            selectBook(newBook.id);
+            renderBookshelf();
+        }
+
         function parseOwnedVolumes(str, maxVol) {
             const owned = new Set();
             if (!str || str.trim() === '') {
                 for (let i = 1; i <= maxVol; i++) owned.add(i);
                 return owned;
             }
-
             const parts = str.split(/[,、\s]+/);
             parts.forEach(part => {
                 if (part.includes('-') || part.includes('〜')) {
@@ -506,7 +582,6 @@
             return owned;
         }
 
-        // Format Set back into clean range string (e.g., "1-6, 8-10")
         function formatOwnedRange(ownedSet, maxVol) {
             const arr = Array.from(ownedSet).sort((a, b) => a - b);
             if (arr.length === 0) return '持っている巻なし';
@@ -531,7 +606,6 @@
             return result.join(', ');
         }
 
-        // Find missing volumes array
         function getMissingVolumes(ownedSet, maxVol) {
             const missing = [];
             for (let i = 1; i <= maxVol; i++) {
@@ -576,7 +650,7 @@
                 spine.className = `book-spine flex flex-col justify-between p-1.5 ${isSelected ? 'pulled-out' : ''} ${isMatchSearch ? 'highlighted' : ''}`;
                 spine.style.backgroundColor = book.color || '#88A47C';
                 spine.style.width = `${Math.min(book.width || 38, 48)}px`;
-                spine.style.height = `${Math.min(book.height || 140, 155)}px`; // Fixed height range fits neatly inside shelf
+                spine.style.height = `${Math.min(book.height || 140, 155)}px`;
                 spine.onclick = () => selectBook(book.id);
 
                 const ownedSet = new Set(book.ownedArray || []);
@@ -584,9 +658,8 @@
 
                 spine.innerHTML = `
                     <span class="writing-vertical font-cute font-bold text-[10px] sm:text-xs tracking-wider mx-auto mt-1 text-white">${book.title}</span>
-                    <span class="font-bold text-[9px] text-center bg-black/25 text-white rounded py-0.5">${book.ownedArray ? book.ownedArray.length : 1}冊</span>
+                    <span class="font-bold text-[9px] text-center bg-black/25 text-white rounded py-0.5">${ownedSet.size}/${book.maxVol}巻</span>
                 `;
-
                 tiers[tierIndex].appendChild(spine);
             });
         }
@@ -596,115 +669,44 @@
             const book = books.find(b => b.id === id);
             if (!book) return;
 
-            const ownedSet = new Set(book.ownedArray || []);
-            const missing = getMissingVolumes(ownedSet, book.maxVol || 1);
-            const rangeStr = formatOwnedRange(ownedSet, book.maxVol || 1);
-
             document.getElementById('active-title').innerText = book.title;
-            document.getElementById('active-vol-summary').innerText = `${ownedSet.size}/${book.maxVol || 1}冊`;
             document.getElementById('active-genre').innerText = book.genre;
-            document.getElementById('active-date').innerText = `登録: ${book.date || '未設定'}`;
-            document.getElementById('active-owned-list').innerText = rangeStr;
-            document.getElementById('active-badge').style.backgroundColor = book.color || '#88A47C';
+            document.getElementById('active-date').innerText = '登録: ' + (book.date || '未設定');
+            
+            const ownedSet = new Set(book.ownedArray || []);
+            document.getElementById('active-vol-summary').innerText = `${ownedSet.size} / ${book.maxVol}巻`;
+            document.getElementById('active-owned-list').innerText = formatOwnedRange(ownedSet, book.maxVol);
 
-            const missingAlert = document.getElementById('active-missing-alert');
+            const missing = getMissingVolumes(ownedSet, book.maxVol);
+            const alertBox = document.getElementById('active-missing-alert');
             if (missing.length > 0) {
-                missingAlert.classList.remove('hidden');
-                document.getElementById('active-missing-text').innerText = `【抜け巻アリ】 ${missing.join(', ')}巻を未持参！`;
+                document.getElementById('active-missing-text').innerText = `抜け巻あり: ${missing.join(', ')}巻`;
+                alertBox.classList.remove('hidden');
             } else {
-                missingAlert.classList.add('hidden');
+                alertBox.classList.add('hidden');
             }
 
-            // Update Detail Modal
-            document.getElementById('detail-title').innerText = book.title;
-            document.getElementById('detail-genre').innerText = book.genre;
-            document.getElementById('detail-date').innerText = book.date || '未登録';
-            document.getElementById('detail-release').innerText = book.release || '未登録';
-            document.getElementById('detail-desc').innerText = book.desc || 'メモ未登録';
-
-            const detailBadge = document.getElementById('detail-missing-badge');
-            if (missing.length > 0) {
-                detailBadge.innerText = `⚠️ 抜け巻: ${missing.join(', ')}巻を持っていません`;
-                detailBadge.className = "inline-block text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full border border-rose-200";
-            } else {
-                detailBadge.innerText = `✨ 1〜${book.maxVol}巻までコンプリート！`;
-                detailBadge.className = "inline-block text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200";
-            }
-
-            renderVolumeGrid(book);
             renderBookshelf();
         }
 
-        // Render checklist grid for ADHD / Missing volume toggles
-        function renderVolumeGrid(book) {
-            const container = document.getElementById('volume-grid-container');
-            container.innerHTML = '';
-            const ownedSet = new Set(book.ownedArray || []);
-
-            for (let v = 1; v <= (book.maxVol || 1); v++) {
-                const isOwned = ownedSet.has(v);
-                const wrapper = document.createElement('div');
-                wrapper.innerHTML = `
-                    <input type="checkbox" id="vol-chk-${v}" ${isOwned ? 'checked' : ''} class="vol-checkbox hidden" onchange="toggleVolume(${book.id}, ${v}, this.checked)">
-                    <label for="vol-chk-${v}" class="flex items-center justify-center h-8 rounded-lg border border-woodLight/40 text-xs text-warmBrown/70 cursor-pointer transition-all select-none bg-white">
-                        ${v}
-                    </label>
-                `;
-                container.appendChild(wrapper);
+        function removeActiveBook() {
+            if (!activeBookId) return;
+            if (confirm('この本を本棚から片付けますか？')) {
+                books = books.filter(b => b.id !== activeBookId);
+                saveBooks();
+                activeBookId = books.length > 0 ? books[0].id : null;
+                if (activeBookId) selectBook(activeBookId);
+                renderBookshelf();
             }
         }
 
-        function toggleVolume(bookId, volNum, isChecked) {
-            const book = books.find(b => b.id === bookId);
-            if (!book) return;
-
-            let ownedSet = new Set(book.ownedArray || []);
-            if (isChecked) ownedSet.add(volNum);
-            else ownedSet.delete(volNum);
-
-            book.ownedArray = Array.from(ownedSet);
-            saveBooks();
-            selectBook(bookId);
-        }
-
-        function onTitleInput(text) {
-            const suggestBox = document.getElementById('suggest-box');
-            const val = text.toLowerCase().trim();
-            suggestBox.innerHTML = '';
-
-            if (!val) {
-                suggestBox.classList.add('hidden');
-                return;
-            }
-
-            const matches = presetCandidates.filter(c => c.title.toLowerCase().includes(val));
-            if (matches.length === 0) {
-                suggestBox.classList.add('hidden');
-                return;
-            }
-
-            matches.forEach(m => {
-                const item = document.createElement('div');
-                item.className = 'p-2.5 hover:bg-pastelCream cursor-pointer transition-colors flex items-center justify-between text-xs text-warmBrown';
-                item.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <span class="w-3 h-3 rounded-full" style="background-color: ${m.color}"></span>
-                        <span class="font-bold">${m.title}</span>
-                    </div>
-                    <span class="text-[10px] text-warmBrown/60">全${m.maxVol}巻目安</span>
-                `;
-                item.onclick = () => {
-                    document.getElementById('form-title').value = m.title;
-                    document.getElementById('form-max-vol').value = m.maxVol;
-                    document.getElementById('form-genre').value = m.genre;
-                    document.getElementById('form-desc').value = m.desc;
-                    document.getElementById('form-owned-range').value = m.ownedStr || `1-${m.maxVol}`;
-                    suggestBox.classList.add('hidden');
-                };
-                suggestBox.appendChild(item);
+        function setGenreFilter(genre, btn) {
+            activeGenreFilter = genre;
+            document.querySelectorAll('.genre-tab').forEach(t => {
+                t.className = "genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0";
             });
-
-            suggestBox.classList.remove('hidden');
+            btn.className = "genre-tab bg-sage text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-xs transition-all flex-shrink-0";
+            renderBookshelf();
         }
 
         function filterBookshelf() {
@@ -713,143 +715,63 @@
 
         function clearSearch() {
             document.getElementById('app-search').value = '';
-            filterBookshelf();
-        }
-
-        function setGenreFilter(genre, btn) {
-            activeGenreFilter = genre;
-            document.querySelectorAll('.genre-tab').forEach(t => {
-                t.className = 'genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0';
-            });
-            btn.className = 'genre-tab bg-sage text-white text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0';
             renderBookshelf();
         }
 
-        function openAddModal() {
-            document.getElementById('add-modal').classList.remove('hidden');
-        }
-
-        function closeAddModal() {
-            document.getElementById('add-modal').classList.add('hidden');
-            document.getElementById('suggest-box').classList.add('hidden');
-        }
-
         function showDetailModal() {
+            const book = books.find(b => b.id === activeBookId);
+            if (!book) return;
+
+            document.getElementById('detail-title').innerText = book.title;
+            document.getElementById('detail-genre').innerText = book.genre;
+            document.getElementById('detail-date').innerText = book.date || '未設定';
+            document.getElementById('detail-release').innerText = book.release || '未登録';
+            document.getElementById('detail-desc').innerText = book.desc || 'メモはまだありません。';
+
+            const ownedSet = new Set(book.ownedArray || []);
+            const missing = getMissingVolumes(ownedSet, book.maxVol);
+            const badge = document.getElementById('detail-missing-badge');
+            if (missing.length > 0) {
+                badge.innerText = `⚠️ 抜け巻があります（${missing.join(', ')}巻）`;
+                badge.classList.remove('hidden');
+            } else {
+                badge.innerText = `✨ 全巻コンプリート中！`;
+                badge.classList.remove('hidden');
+            }
+
+            const grid = document.getElementById('volume-grid-container');
+            grid.innerHTML = '';
+            for (let i = 1; i <= book.maxVol; i++) {
+                const isOwned = ownedSet.has(i);
+                const id = `vol_check_${i}`;
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <input type="checkbox" id="${id}" ${isOwned ? 'checked' : ''} onchange="toggleVolume(${i})" class="vol-checkbox hidden">
+                    <label for="${id}" class="w-full h-9 rounded-xl border border-woodLight/30 bg-white text-xs font-bold flex items-center justify-center cursor-pointer transition-all">${i}</label>
+                `;
+                grid.appendChild(div);
+            }
+
             document.getElementById('detail-modal').classList.remove('hidden');
         }
 
         function closeDetailModal() {
             document.getElementById('detail-modal').classList.add('hidden');
+            if (activeBookId) selectBook(activeBookId);
         }
 
-        function submitNewBook(e) {
-            e.preventDefault();
-            const title = document.getElementById('form-title').value.trim();
-            const maxVol = parseInt(document.getElementById('form-max-vol').value) || 1;
-            const genre = document.getElementById('form-genre').value;
-            const rangeStr = document.getElementById('form-owned-range').value;
-            const date = document.getElementById('form-date').value || new Date().toISOString().split('T')[0];
-            const release = document.getElementById('form-release').value;
-            const desc = document.getElementById('form-desc').value.trim();
-
-            const selectedColorObj = document.querySelector('input[name="spineColor"]:checked');
-            const color = selectedColorObj ? selectedColorObj.value : '#88A47C';
-
-            const ownedSet = parseOwnedVolumes(rangeStr, maxVol);
-
-            const newBook = {
-                id: Date.now(),
-                title,
-                maxVol,
-                ownedArray: Array.from(ownedSet),
-                genre,
-                date,
-                release,
-                desc,
-                color,
-                width: Math.floor(Math.random() * 10) + 36,
-                height: Math.floor(Math.random() * 15) + 138
-            };
-
-            books.unshift(newBook);
-            saveBooks();
-            closeAddModal();
-            selectBook(newBook.id);
-
-            // Reset form
-            document.getElementById('form-title').value = '';
-            document.getElementById('form-owned-range').value = '';
-            document.getElementById('form-desc').value = '';
-        }
-
-        function removeActiveBook() {
-            if (!activeBookId) return;
+        function toggleVolume(volNum) {
             const book = books.find(b => b.id === activeBookId);
-            if (confirm(`「${book.title}」を本棚から削除しますか？`)) {
-                books = books.filter(b => b.id !== activeBookId);
-                saveBooks();
-                if (books.length > 0) {
-                    selectBook(books[0].id);
-                } else {
-                    activeBookId = null;
-                    renderBookshelf();
-                }
+            if (!book) return;
+            const ownedSet = new Set(book.ownedArray || []);
+            if (ownedSet.has(volNum)) {
+                ownedSet.delete(volNum);
+            } else {
+                ownedSet.add(volNum);
             }
-        },
-        {
-
-  "bookshelf_settings": {
-
-    "max_volumes": 500,
-
-    "volume_management_type": "extended_checkbox_grid",
-
-    "notes": "100巻制限を解除し、最長500巻まで対応可能に拡張。抜け巻（歯抜け）チェッカーも対応"
-
-  },
-
-  "color_palette_system": {
-
-    "description": "トーンを現代的・統一的なアース＆パステル系に調合したカラーパレット選択システム",
-
-    "preset_tones": [
-
-      { "id": "sage_green", "name": "セージグリーン", "hex": "#A2B9A6" },
-
-      { "id": "dusty_rose", "name": "ダスティローズ", "hex": "#D8A7B1" },
-
-      { "id": "terracotta", "name": "テラコッタ", "hex": "#E0896C" },
-
-      { "id": "mustard_yellow", "name": "マスタードイエロー", "hex": "#E7C169" },
-
-      { "id": "slate_blue", "name": "スレートブルー", "hex": "#8FA3B8" },
-
-      { "id": "mellow_lavender", "name": "メロウラベンダー", "hex": "#B1A6C7" },
-
-      { "id": "warm_sandy", "name": "サンドベージュ", "hex": "#D5C5B0" },
-
-      { "id": "smoky_charcoal", "name": "スモーキーチャコール", "hex": "#5C6B73" },
-
-      { "id": "cream_peach", "name": "クリームピーチ", "hex": "#F4C2C2" },
-
-      { "id": "olive_moss", "name": "オリーブモス", "hex": "#8A9A86" }
-
-    ],
-
-    "custom_color_picker": true
-
-  },
-
-  "layout_fixes": {
-
-    "spine_alignment": "Shelf collision fixed completely. Books fit neatly within shelf bounds.",
-
-    "packing_mode": "Tight horizontal packing without awkward gap overflow."
-
-  }
-
-}
+            book.ownedArray = Array.from(ownedSet).sort((a, b) => a - b);
+            saveBooks();
+        }
     </script>
 </body>
 </html>
-
