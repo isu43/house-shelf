@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>house shelf | 出先での「何巻まで持ってたっけ？」をゼロにするおうち図書</title>
+    <title>house shelf | かわいいおうち図書・歯抜け防止蔵書管理</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -18,20 +18,24 @@
             theme: {
                 extend: {
                     colors: {
-                        cream: '#FDFBF7',
-                        creamDark: '#F4EFE6',
-                        woodLight: '#D0B49F',
-                        woodBase: '#A47E5B',
-                        woodDark: '#6E473B',
-                        woodShadow: '#4A2E2B',
-                        sage: '#7C9070',
-                        sageLight: '#EBF0E9',
-                        warmBrown: '#4A3E3D',
-                        softAccent: '#E5A97D',
+                        pastelPink: '#FFD1DC',
+                        pastelCream: '#FFF8F0',
+                        pastelYellow: '#FFF1C5',
+                        pastelGreen: '#E2F0D9',
+                        pastelPurple: '#E8DFF5',
+                        pastelBlue: '#D8E2DC',
+                        woodLight: '#E8C5A8',
+                        woodBase: '#C69C7B',
+                        woodDark: '#8D6242',
+                        woodShadow: '#5C3D27',
+                        warmBrown: '#5A4637',
+                        softAccent: '#FF9AA2',
+                        sage: '#88A47C',
+                        sageLight: '#EDF4EA'
                     },
                     fontFamily: {
-                        sans: ['"Noto Sans JP"', 'sans-serif'],
-                        rounded: ['"Zen Maru Gothic"', 'sans-serif'],
+                        sans: ['"Zen Maru Gothic"', 'sans-serif'],
+                        cute: ['"Kiwi Maru"', 'serif'],
                     }
                 }
             }
@@ -39,84 +43,110 @@
     </script>
     <style>
         body {
-            background-color: #FDFBF7;
-            color: #4A3E3D;
-            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #FAF4ED;
+            background-image: 
+                radial-gradient(#E8C5A8 0.75px, transparent 0.75px), 
+                radial-gradient(#E8C5A8 0.75px, #FAF4ED 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            color: #5A4637;
+            font-family: 'Zen Maru Gothic', sans-serif;
             overflow-x: hidden;
         }
 
-        /* 3D Bookshelf & Spine Styles */
+        /* 3D Bookshelf Frame & Containment */
         .perspective-container {
-            perspective: 1200px;
-            perspective-origin: 50% 40%;
+            perspective: 1000px;
+            perspective-origin: 50% 30%;
         }
 
         .bookshelf-3d {
             transform-style: preserve-3d;
-            background: linear-gradient(135deg, #A47E5B 0%, #7E5C3D 100%);
+            background: linear-gradient(135deg, #DBB594 0%, #B88E6B 100%);
             box-shadow: 
-                0 30px 60px -12px rgba(50, 30, 20, 0.4),
-                inset 0 0 40px rgba(0, 0, 0, 0.3),
-                inset 0 4px 15px rgba(255, 255, 255, 0.25);
-            border-radius: 28px;
+                0 20px 40px -10px rgba(92, 61, 39, 0.35),
+                inset 0 0 30px rgba(0, 0, 0, 0.25),
+                inset 0 4px 12px rgba(255, 255, 255, 0.4);
+            border-radius: 32px;
             position: relative;
         }
 
-        .shelf-plank {
-            background: linear-gradient(180deg, #D4B69B 0%, #8C6645 40%, #5E412A 100%);
-            box-shadow: 
-                0 14px 20px rgba(45, 25, 15, 0.35),
-                inset 0 3px 6px rgba(255, 255, 255, 0.4),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.5);
+        .shelf-tier {
             position: relative;
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 16px;
+            padding-top: 12px;
+        }
+
+        .shelf-plank {
+            background: linear-gradient(180deg, #E6C4A5 0%, #A67B5B 45%, #785338 100%);
+            box-shadow: 
+                0 12px 18px rgba(60, 35, 15, 0.3),
+                inset 0 3px 4px rgba(255, 255, 255, 0.6),
+                inset 0 -3px 5px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 20;
+            height: 18px;
+            border-radius: 4px;
+        }
+
+        /* Spine styling with absolute heights and tight left alignment */
+        .shelf-books-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start; /* Left-aligned packing */
+            gap: 2px;
+            padding: 0 16px;
+            height: 165px; /* Fixed height to prevent overlapping shelf above */
+            overflow-x: auto;
+            position: relative;
+            z-index: 10;
         }
 
         .book-spine {
             transform-style: preserve-3d;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
             position: relative;
             transform-origin: bottom center;
-            border-radius: 3px 6px 6px 3px;
+            border-radius: 4px 7px 7px 4px;
+            flex-shrink: 0;
+            box-shadow: -3px 4px 8px rgba(0, 0, 0, 0.15);
         }
 
+        /* Top surface of spine (prevents clipping illusion) */
         .book-spine::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: inherit;
-            background: linear-gradient(90deg, 
-                rgba(255,255,255,0.45) 0%, 
-                rgba(255,255,255,0.0) 12%, 
-                rgba(0,0,0,0.0) 80%, 
-                rgba(0,0,0,0.3) 100%
-            );
-            pointer-events: none;
+            top: 0; left: 0; right: 0; height: 5px;
+            background: rgba(255, 255, 255, 0.35);
+            border-radius: 3px 6px 0 0;
         }
 
+        /* Pages edge simulation on the right */
         .book-spine::after {
             content: '';
             position: absolute;
-            top: 4px; bottom: 4px; right: -4px;
-            width: 4px;
-            background: linear-gradient(90deg, #EAE5D9 0%, #D4CEBF 100%);
-            box-shadow: 1px 0 2px rgba(0,0,0,0.2);
+            top: 3px; bottom: 3px; right: -3px;
+            width: 3px;
+            background: linear-gradient(90deg, #FAF6EE 0%, #E6DFD3 100%);
             border-radius: 0 2px 2px 0;
+            box-shadow: 1px 0 1px rgba(0,0,0,0.15);
         }
 
         .book-spine:hover, .book-spine.pulled-out {
-            transform: translateZ(50px) translateY(-24px) scale(1.06);
-            box-shadow: -12px 24px 30px rgba(35, 20, 10, 0.4), 0 0 15px rgba(255, 255, 255, 0.3);
-            z-index: 40;
+            transform: translateZ(35px) translateY(-14px) scale(1.05);
+            box-shadow: -8px 16px 20px rgba(70, 40, 20, 0.35), 0 0 12px rgba(255, 255, 255, 0.5);
+            z-index: 50;
         }
 
         .book-spine.highlighted {
-            animation: pulseHighlight 1.5s infinite alternate;
+            animation: pulseHighlight 1.2s infinite alternate;
         }
 
         @keyframes pulseHighlight {
-            0% { transform: translateZ(40px) translateY(-16px) scale(1.04); }
-            100% { transform: translateZ(60px) translateY(-28px) scale(1.08); }
+            0% { transform: translateZ(25px) translateY(-10px); }
+            100% { transform: translateZ(45px) translateY(-20px) scale(1.06); }
         }
 
         .writing-vertical {
@@ -128,153 +158,145 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Autocomplete dropdown styling */
-        .suggest-item:hover {
-            background-color: #EBF0E9;
+        /* Color Picker Radio Buttons */
+        .color-radio:checked + label {
+            transform: scale(1.15);
+            ring: 3px rgba(136, 164, 124, 0.5);
+            border-color: #5A4637;
+        }
+
+        /* Volume Box Checkbox Grid */
+        .vol-checkbox:checked + label {
+            background-color: #88A47C;
+            color: white;
+            border-color: #88A47C;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(136, 164, 124, 0.4);
         }
     </style>
 </head>
-<body class="antialiased selection:bg-sage selection:text-white pb-20">
+<body class="antialiased selection:bg-pastelPink selection:text-warmBrown pb-20">
 
-    <!-- Header Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-cream/90 backdrop-blur-md border-b border-woodLight/20">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 bg-pastelCream/90 backdrop-blur-md border-b-2 border-woodLight/30 shadow-xs">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-sage flex items-center justify-center text-white shadow-md">
-                    <i class="fa-solid fa-book-shelf text-xl"></i>
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-softAccent to-pastelPink flex items-center justify-center text-white shadow-md transform -rotate-3 hover:rotate-0 transition-all">
+                    <i class="fa-solid fa-shapes text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-rounded font-black text-2xl text-warmBrown leading-none">house shelf</h1>
-                    <span class="text-[10px] font-bold text-sage tracking-widest">おうち図書・蔵書管理</span>
+                    <h1 class="font-cute font-bold text-2xl text-warmBrown leading-none flex items-center gap-1.5">
+                        house shelf <span class="text-xs bg-pastelYellow text-warmBrown font-bold px-2 py-0.5 rounded-full border border-woodLight/40">おうち図書</span>
+                    </h1>
+                    <span class="text-[11px] font-bold text-sage tracking-wider">抜け巻ゼロ！即座チェック</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <button onclick="openAddModal()" class="bg-sage text-white px-4 sm:px-6 py-2.5 rounded-full font-rounded font-bold text-xs sm:text-sm hover:bg-sage/90 shadow-md transform hover:-translate-y-0.5 transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle text-sm"></i> <span>本を追加する</span>
+                <button onclick="openAddModal()" class="bg-gradient-to-r from-sage to-emerald-600 text-white px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm hover:opacity-95 shadow-md transform hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus text-sm"></i> <span>本を追加する</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main App Container -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 space-y-8">
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
 
-        <!-- Search & Quick Filter Bar -->
-        <section class="bg-white p-4 sm:p-6 rounded-3xl border border-woodLight/30 shadow-sm space-y-4">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <!-- Search & Filter Controls -->
+        <section class="bg-white/90 backdrop-blur-sm p-4 sm:p-5 rounded-3xl border-2 border-woodLight/30 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
                 
                 <!-- Quick Search Input -->
                 <div class="relative flex-1 w-full">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-warmBrown/40"></i>
-                    <input type="text" id="app-search" placeholder="出先で検索：「何巻まで持ってたっけ？」 (例: フリーレン, コナン)" 
+                    <input type="text" id="app-search" placeholder="出先で爆速検索：「コナン何巻持ってた？」" 
                            oninput="filterBookshelf()"
-                           class="w-full bg-cream border border-woodLight/40 rounded-full py-3 pl-11 pr-10 text-sm text-warmBrown placeholder-warmBrown/40 focus:outline-none focus:border-sage focus:ring-2 focus:ring-sage/20 transition-all">
+                           class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-full py-2.5 pl-11 pr-10 text-xs sm:text-sm text-warmBrown placeholder-warmBrown/40 focus:outline-none focus:border-sage transition-all">
                     <button onclick="clearSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-warmBrown/40 hover:text-warmBrown text-xs bg-woodLight/20 w-6 h-6 rounded-full flex items-center justify-center">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <!-- Genre Tabs -->
+                <!-- Genre Filter Tabs -->
                 <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto no-scrollbar pb-1 sm:pb-0">
-                    <button onclick="setGenreFilter('all', this)" class="genre-tab bg-sage text-white text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0">すべて</button>
-                    <button onclick="setGenreFilter('マンガ', this)" class="genre-tab bg-creamDark text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0">マンガ</button>
-                    <button onclick="setGenreFilter('小説', this)" class="genre-tab bg-creamDark text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0">小説</button>
-                    <button onclick="setGenreFilter('実用・技術', this)" class="genre-tab bg-creamDark text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0">実用・技術</button>
-                    <button onclick="setGenreFilter('雑誌', this)" class="genre-tab bg-creamDark text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0">雑誌</button>
+                    <button onclick="setGenreFilter('all', this)" class="genre-tab bg-sage text-white text-xs font-bold px-3.5 py-2 rounded-full shadow-xs transition-all flex-shrink-0">すべて</button>
+                    <button onclick="setGenreFilter('マンガ', this)" class="genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0">マンガ</button>
+                    <button onclick="setGenreFilter('小説', this)" class="genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0">小説</button>
+                    <button onclick="setGenreFilter('実用・技術', this)" class="genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0">実用・技術</button>
+                    <button onclick="setGenreFilter('雑誌', this)" class="genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0">雑誌</button>
                 </div>
-            </div>
-
-            <div id="search-count" class="text-xs font-bold text-sage hidden">
-                <i class="fa-solid fa-filter mr-1"></i> 検索・絞り込み結果を表示中
             </div>
         </section>
 
-        <!-- Dynamic 3D Bookshelf View -->
-        <section class="perspective-container relative">
-
-            <!-- Active Selected Book Banner / Quick Info -->
-            <div id="active-book-card" class="bg-white p-5 rounded-3xl border-2 border-sage/40 shadow-lg mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all duration-300 hidden">
-                <div class="flex items-center gap-4">
-                    <div id="active-badge" class="w-14 h-14 rounded-2xl bg-sage text-white flex flex-col items-center justify-center flex-shrink-0 shadow-md">
-                        <span class="text-[10px] font-bold opacity-80">所持</span>
-                        <span id="active-vol" class="font-rounded font-black text-xl leading-none">1巻</span>
+        <!-- Active Selected Book Banner -->
+        <section id="active-book-card" class="bg-white p-5 rounded-3xl border-2 border-sage/40 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all duration-300 hidden">
+            <div class="flex items-center gap-4">
+                <div id="active-badge" class="w-16 h-16 rounded-2xl bg-sage text-white flex flex-col items-center justify-center flex-shrink-0 shadow-sm border-2 border-white">
+                    <span class="text-[10px] font-bold opacity-90">持っている</span>
+                    <span id="active-vol-summary" class="font-bold text-xs leading-tight text-center px-1">全1冊</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span id="active-genre" class="text-[10px] font-bold bg-sageLight text-sage px-2.5 py-0.5 rounded-full">マンガ</span>
+                        <span id="active-date" class="text-[10px] text-warmBrown/50 font-medium">登録: -</span>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span id="active-genre" class="text-[10px] font-bold bg-sageLight text-sage px-2 py-0.5 rounded-full">マンガ</span>
-                            <span id="active-date" class="text-[10px] text-warmBrown/50 font-medium">購入: -</span>
-                        </div>
-                        <h3 id="active-title" class="font-rounded font-bold text-xl text-warmBrown mt-0.5">-</h3>
+                    <h3 id="active-title" class="font-cute font-bold text-xl text-warmBrown mt-0.5">-</h3>
+                    <div id="active-missing-alert" class="text-xs text-rose-500 font-bold mt-1 flex items-center gap-1 hidden">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <span id="active-missing-text">抜け巻があります！</span>
                     </div>
-                </div>
-
-                <!-- Quick Volume Adjuster (+/-) -->
-                <div class="flex items-center gap-2 bg-cream px-3 py-1.5 rounded-2xl border border-woodLight/30">
-                    <span class="text-xs font-bold text-warmBrown/70">持っている巻数:</span>
-                    <button onclick="adjustVolume(-1)" class="w-7 h-7 bg-white hover:bg-woodLight/20 text-warmBrown rounded-lg border border-woodLight/40 flex items-center justify-center font-bold text-sm shadow-xs transition-all">-</button>
-                    <span id="active-vol-count" class="font-rounded font-black text-lg text-sage px-1">1</span>
-                    <button onclick="adjustVolume(1)" class="w-7 h-7 bg-white hover:bg-woodLight/20 text-warmBrown rounded-lg border border-woodLight/40 flex items-center justify-center font-bold text-sm shadow-xs transition-all">+</button>
-                </div>
-
-                <div class="flex-1 max-w-lg bg-cream/70 p-3 rounded-2xl border border-woodLight/20 text-xs text-warmBrown/80 leading-relaxed">
-                    <div class="font-bold text-warmBrown/60 text-[10px] mb-0.5"><i class="fa-solid fa-align-left mr-1"></i> あらすじ & メモ</div>
-                    <div id="active-desc" class="line-clamp-2">-</div>
-                </div>
-
-                <div class="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <button onclick="showDetailModal()" class="bg-creamDark text-warmBrown font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-woodLight/30 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-expand text-xs"></i> 詳細・メモ
-                    </button>
-                    <button onclick="removeActiveBook()" class="text-rose-400 hover:text-rose-600 p-2 text-xs">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
                 </div>
             </div>
 
-            <!-- Empty Bookshelf Prompt -->
-            <div id="empty-shelf-notice" class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border-2 border-dashed border-woodLight/40 text-center space-y-3 shadow-sm mb-6">
-                <div class="w-14 h-14 bg-sageLight text-sage rounded-2xl flex items-center justify-center mx-auto text-2xl">
-                    <i class="fa-solid fa-book-open"></i>
-                </div>
-                <h3 class="font-rounded font-bold text-lg text-warmBrown">本棚はまだ空っぽです</h3>
-                <p class="text-xs text-warmBrown/70 max-w-md mx-auto">
-                    右上の「本を追加する」から、家にある本や単行本を検索してすぐ追加しましょう！候補が出るので何巻まで持っているか簡単に登録できます。
-                </p>
-                <button onclick="openAddModal()" class="bg-sage text-white text-xs font-rounded font-bold px-5 py-2.5 rounded-full hover:bg-sage/90 shadow-md transition-all inline-flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle"></i> 最初の本を追加する
+            <div class="flex-1 max-w-md bg-pastelCream/80 p-3 rounded-2xl border border-woodLight/30 text-xs text-warmBrown/80">
+                <div class="font-bold text-warmBrown/60 text-[10px] mb-1"><i class="fa-solid fa-layer-group text-sage mr-1"></i> 所持している巻</div>
+                <div id="active-owned-list" class="font-bold text-sage break-words line-clamp-2">-</div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                <button onclick="showDetailModal()" class="bg-pastelCream text-warmBrown font-bold text-xs px-4 py-2.5 rounded-xl border border-woodLight/40 hover:bg-woodLight/20 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check text-sage"></i> 抜け巻チェック・詳細
+                </button>
+                <button onclick="removeActiveBook()" class="text-rose-400 hover:text-rose-600 p-2 text-xs">
+                    <i class="fa-solid fa-trash-can"></i>
                 </button>
             </div>
+        </section>
 
-            <!-- 3D Wooden Shelf Frame -->
-            <div class="bookshelf-3d p-4 sm:p-8 border-4 border-woodShadow/40 space-y-8">
+        <!-- Empty Bookshelf Notice -->
+        <div id="empty-shelf-notice" class="bg-white/80 backdrop-blur-sm p-8 rounded-3xl border-2 border-dashed border-woodLight/50 text-center space-y-3 shadow-xs">
+            <div class="w-16 h-16 bg-pastelPink/50 text-softAccent rounded-3xl flex items-center justify-center mx-auto text-3xl shadow-inner">
+                <i class="fa-solid fa-book-bookmark"></i>
+            </div>
+            <h3 class="font-cute font-bold text-xl text-warmBrown">本棚はまだ空っぽです♪</h3>
+            <p class="text-xs text-warmBrown/70 max-w-sm mx-auto leading-relaxed">
+                「本を追加する」ボタンから、家にある本を登録してみましょう！「1〜6巻と8巻を持っている（7巻だけ抜けてる）」のような登録もカンタンにできます。
+            </p>
+            <button onclick="openAddModal()" class="bg-sage text-white text-xs font-bold px-6 py-2.5 rounded-full hover:bg-sage/90 shadow-md transition-all inline-flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle"></i> 最初の本を棚に飾る
+            </button>
+        </div>
+
+        <!-- 3D Wooden Bookshelf View -->
+        <section class="perspective-container relative">
+            <div class="bookshelf-3d p-4 sm:p-6 border-4 border-woodShadow/30 space-y-4">
                 
-                <!-- Tier 1 -->
-                <div class="shelf-tier relative z-40">
-                    <div id="tier-1" class="flex items-end justify-center gap-1.5 sm:gap-2.5 px-2 pt-6 pb-1 border-b-12 shelf-plank rounded-sm overflow-x-auto no-scrollbar min-h-[160px]">
-                        <!-- Books injected dynamically -->
-                    </div>
+                <!-- Shelf Tier 1 -->
+                <div class="shelf-tier">
+                    <div id="tier-1" class="shelf-books-container no-scrollbar"></div>
+                    <div class="shelf-plank"></div>
                 </div>
 
-                <!-- Tier 2 -->
-                <div class="shelf-tier relative z-30">
-                    <div id="tier-2" class="flex items-end justify-center gap-1.5 sm:gap-2.5 px-2 pt-6 pb-1 border-b-12 shelf-plank rounded-sm overflow-x-auto no-scrollbar min-h-[160px]">
-                        <!-- Books injected dynamically -->
-                    </div>
+                <!-- Shelf Tier 2 -->
+                <div class="shelf-tier">
+                    <div id="tier-2" class="shelf-books-container no-scrollbar"></div>
+                    <div class="shelf-plank"></div>
                 </div>
 
-                <!-- Tier 3 -->
-                <div class="shelf-tier relative z-20">
-                    <div id="tier-3" class="flex items-end justify-center gap-1.5 sm:gap-2.5 px-2 pt-6 pb-1 border-b-12 shelf-plank rounded-sm overflow-x-auto no-scrollbar min-h-[160px]">
-                        <!-- Books injected dynamically -->
-                    </div>
-                </div>
-
-                <!-- Tier 4 -->
-                <div class="shelf-tier relative z-10">
-                    <div id="tier-4" class="flex items-end justify-center gap-1.5 sm:gap-2.5 px-2 pt-6 pb-1 border-b-12 shelf-plank rounded-sm overflow-x-auto no-scrollbar min-h-[160px]">
-                        <!-- Books injected dynamically -->
-                    </div>
+                <!-- Shelf Tier 3 -->
+                <div class="shelf-tier">
+                    <div id="tier-3" class="shelf-books-container no-scrollbar"></div>
+                    <div class="shelf-plank"></div>
                 </div>
 
             </div>
@@ -282,129 +304,168 @@
 
     </main>
 
-    <!-- Modal: Add New Book (With Autocomplete Suggestion List) -->
+    <!-- Modal: Add New Book -->
     <div id="add-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-woodLight/30 space-y-4 relative">
+        <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl border-2 border-woodLight/40 space-y-4 relative max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="flex items-center justify-between pb-3 border-b border-woodLight/20">
-                <h3 class="font-rounded font-bold text-xl text-warmBrown flex items-center gap-2">
-                    <i class="fa-solid fa-bookmark text-sage"></i> 本棚に本を追加
+                <h3 class="font-cute font-bold text-xl text-warmBrown flex items-center gap-2">
+                    <i class="fa-solid fa-book-medical text-sage"></i> 本棚に本を追加
                 </h3>
                 <button onclick="closeAddModal()" class="text-warmBrown/40 hover:text-warmBrown text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
             <form onsubmit="submitNewBook(event)" class="space-y-4">
+                
+                <!-- Title & Autocomplete -->
                 <div class="relative">
-                    <label class="text-xs font-bold text-warmBrown/80 block mb-1">タイトル検索 <span class="text-rose-400">*</span></label>
-                    <input type="text" id="form-title" required autocomplete="off" oninput="onTitleInput(this.value)" placeholder="例: 葬送のフリーレン, SPY×FAMILY" class="w-full bg-cream border border-woodLight/40 rounded-xl p-3 text-sm focus:outline-none focus:border-sage">
+                    <label class="text-xs font-bold text-warmBrown/80 block mb-1">作品タイトル <span class="text-rose-400">*</span></label>
+                    <input type="text" id="form-title" required autocomplete="off" oninput="onTitleInput(this.value)" placeholder="例: 名探偵コナン, 葬送のフリーレン" class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
                     
-                    <!-- Autocomplete Dropdown List -->
-                    <div id="suggest-box" class="absolute left-0 right-0 top-full mt-1 bg-white border border-woodLight/40 rounded-2xl shadow-xl z-50 max-h-48 overflow-y-auto hidden divide-y divide-creamDark">
+                    <div id="suggest-box" class="absolute left-0 right-0 top-full mt-1 bg-white border-2 border-woodLight/40 rounded-2xl shadow-xl z-50 max-h-40 overflow-y-auto hidden divide-y divide-pastelCream">
                         <!-- Auto-suggest items -->
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-bold text-warmBrown/80 block mb-1">今持っている巻数 <span class="text-rose-400">*</span></label>
-                        <input type="number" id="form-vol" min="1" required placeholder="例: 13" class="w-full bg-cream border border-woodLight/40 rounded-xl p-3 text-sm focus:outline-none focus:border-sage">
+                <!-- Spine Color Selector -->
+                <div>
+                    <label class="text-xs font-bold text-warmBrown/80 block mb-1.5">背表紙のかわいいカラー <span class="text-xs font-normal text-warmBrown/60">(選択可能)</span></label>
+                    <div class="flex items-center gap-3 overflow-x-auto pb-1">
+                        <div>
+                            <input type="radio" name="spineColor" id="c-sage" value="#88A47C" checked class="color-radio hidden">
+                            <label for="c-sage" class="w-8 h-8 rounded-full bg-[#88A47C] inline-block cursor-pointer border-2 border-transparent transition-all shadow-xs" title="セージグリーン"></label>
+                        </div>
+                        <div>
+                            <input type="radio" name="spineColor" id="c-pink" value="#FF9AA2" class="color-radio hidden">
+                            <label for="c-pink" class="w-8 h-8 rounded-full bg-[#FF9AA2] inline-block cursor-pointer border-2 border-transparent transition-all shadow-xs" title="コーラルピンク"></label>
+                        </div>
+                        <div>
+                            <input type="radio" name="spineColor" id="c-yellow" value="#E8C5A8" class="color-radio hidden">
+                            <label for="c-yellow" class="w-8 h-8 rounded-full bg-[#E8C5A8] inline-block cursor-pointer border-2 border-transparent transition-all shadow-xs" title="ミルクティー"></label>
+                        </div>
+                        <div>
+                            <input type="radio" name="spineColor" id="c-purple" value="#B5EAD7" class="color-radio hidden">
+                            <label for="c-purple" class="w-8 h-8 rounded-full bg-[#B5EAD7] inline-block cursor-pointer border-2 border-transparent transition-all shadow-xs" title="ミント"></label>
+                        </div>
+                        <div>
+                            <input type="radio" name="spineColor" id="c-lavender" value="#C7CEEA" class="color-radio hidden">
+                            <label for="c-lavender" class="w-8 h-8 rounded-full bg-[#C7CEEA] inline-block cursor-pointer border-2 border-transparent transition-all shadow-xs" title="ラベンダー"></label>
+                        </div>
+                        <div>
+                            <input type="radio" name="spineColor" id="c-brown" value="#8D6242" class="color-radio hidden">
+                            <label for="c-brown" class="w-8 h-8 rounded-full bg-[#8D6242] inline-block cursor-pointer border-2 border-transparent transition-all shadow-xs" title="クラシックウッド"></label>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Genre & Total Volumes -->
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-xs font-bold text-warmBrown/80 block mb-1">ジャンル</label>
-                        <select id="form-genre" class="w-full bg-cream border border-woodLight/40 rounded-xl p-3 text-sm focus:outline-none focus:border-sage">
+                        <select id="form-genre" class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
                             <option value="マンガ">マンガ</option>
                             <option value="小説">小説</option>
                             <option value="実用・技術">実用・技術</option>
                             <option value="雑誌">雑誌</option>
                         </select>
                     </div>
+                    <div>
+                        <label class="text-xs font-bold text-warmBrown/80 block mb-1">最新刊行数 (全何巻まである？)</label>
+                        <input type="number" id="form-max-vol" min="1" max="100" value="20" required class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <!-- Owned Volumes Range Input (ADHD / Skip Friendly) -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-bold text-warmBrown/80 block">持っている巻 (範囲またはカンマ区切り)</label>
+                        <span class="text-[10px] text-sage font-bold">例: 1-6, 8-20 (7巻抜け)</span>
+                    </div>
+                    <input type="text" id="form-owned-range" placeholder="例: 1-10 または 1,2,3,5" class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage font-mono">
+                    <p class="text-[10px] text-warmBrown/50 mt-1">※ 空白の場合は 1巻〜最新巻まで全巻持っている設定になります。</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="text-xs font-bold text-warmBrown/80 block mb-1">購入時期</label>
-                        <input type="date" id="form-date" class="w-full bg-cream border border-woodLight/40 rounded-xl p-3 text-sm focus:outline-none focus:border-sage">
+                        <input type="date" id="form-date" class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-warmBrown/80 block mb-1">次巻の発売予定日</label>
-                        <input type="date" id="form-release" class="w-full bg-cream border border-woodLight/40 rounded-xl p-3 text-sm focus:outline-none focus:border-sage">
+                        <label class="text-xs font-bold text-warmBrown/80 block mb-1">新刊の発売予定日</label>
+                        <input type="date" id="form-release" class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage">
                     </div>
                 </div>
 
                 <div>
-                    <label class="text-xs font-bold text-warmBrown/80 block mb-1">あらすじ・読了メモ</label>
-                    <textarea id="form-desc" rows="3" placeholder="候補を選ぶとあらすじが自動入力されます" class="w-full bg-cream border border-woodLight/40 rounded-xl p-3 text-sm focus:outline-none focus:border-sage"></textarea>
+                    <label class="text-xs font-bold text-warmBrown/80 block mb-1">感想メモ・あらすじ</label>
+                    <textarea id="form-desc" rows="2" placeholder="自由な読了メモや感想" class="w-full bg-pastelCream border-2 border-woodLight/30 rounded-xl p-2.5 text-xs text-warmBrown focus:outline-none focus:border-sage"></textarea>
                 </div>
 
                 <div class="pt-2 flex justify-end gap-3">
-                    <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-warmBrown/70 bg-creamDark">キャンセル</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-full text-xs font-rounded font-bold text-white bg-sage hover:bg-sage/90 shadow-md">本棚に追加！</button>
+                    <button type="button" onclick="closeAddModal()" class="px-5 py-2 rounded-full text-xs font-bold text-warmBrown/70 bg-pastelCream">キャンセル</button>
+                    <button type="submit" class="px-6 py-2 rounded-full text-xs font-bold text-white bg-sage hover:bg-sage/90 shadow-md">本棚に追加！</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal: Book Detailed View -->
+    <!-- Modal: Volume Grid Checklist & Detailed Note View -->
     <div id="detail-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-woodLight/30 space-y-5">
+        <div class="bg-white rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl border-2 border-woodLight/40 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="flex items-center justify-between pb-3 border-b border-woodLight/20">
                 <span id="detail-genre" class="text-xs font-bold bg-sageLight text-sage px-3 py-1 rounded-full">マンガ</span>
                 <button onclick="closeDetailModal()" class="text-warmBrown/40 hover:text-warmBrown text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="text-center space-y-2">
-                <h2 id="detail-title" class="font-rounded font-black text-2xl text-warmBrown">-</h2>
-                <div class="inline-flex items-center gap-2 bg-cream px-4 py-2 rounded-2xl border border-woodLight/30">
-                    <span class="text-xs text-warmBrown/60">この本は今家に</span>
-                    <span id="detail-vol" class="font-rounded font-black text-2xl text-sage">1</span>
-                    <span class="text-xs text-warmBrown/60">巻あります</span>
+            <div class="text-center space-y-1">
+                <h2 id="detail-title" class="font-cute font-bold text-2xl text-warmBrown">-</h2>
+                <div id="detail-missing-badge" class="inline-block text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full border border-rose-200">
+                    <!-- Missing volume message -->
                 </div>
             </div>
 
-            <div class="bg-cream/60 p-4 rounded-2xl space-y-2 border border-woodLight/20">
-                <div class="text-xs text-warmBrown/60 flex justify-between">
-                    <span>購入登録日: <strong id="detail-date" class="text-warmBrown">-</strong></span>
-                    <span>新刊発売予定: <strong id="detail-release" class="text-sage">未登録</strong></span>
+            <!-- Individual Volume Check Grid -->
+            <div class="bg-pastelCream p-4 rounded-2xl border border-woodLight/30 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-warmBrown"><i class="fa-solid fa-square-check text-sage mr-1"></i> 所持巻チェックリスト</span>
+                    <span class="text-[10px] text-warmBrown/60">タップして持ってる/抜けてるを簡単切替</span>
+                </div>
+                <div id="volume-grid-container" class="grid grid-cols-6 sm:grid-cols-8 gap-1.5 pt-2 max-h-48 overflow-y-auto p-1">
+                    <!-- Dynamic Volume Checkboxes -->
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl space-y-2 border border-woodLight/20 text-xs">
+                <div class="flex justify-between text-warmBrown/60">
+                    <span>登録日: <strong id="detail-date" class="text-warmBrown">-</strong></span>
+                    <span>次巻発売予定: <strong id="detail-release" class="text-sage">未登録</strong></span>
                 </div>
                 <hr class="border-woodLight/20">
                 <div>
-                    <span class="text-[11px] font-bold text-warmBrown/60 block mb-1">作品概要 & 読書ノート</span>
-                    <p id="detail-desc" class="text-xs text-warmBrown/80 leading-relaxed">-</p>
+                    <span class="font-bold text-warmBrown/70 block mb-1">読書ノート & メモ</span>
+                    <p id="detail-desc" class="text-warmBrown/80 leading-relaxed">-</p>
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <button onclick="closeDetailModal()" class="w-full py-3 rounded-full text-xs font-rounded font-bold text-white bg-sage hover:bg-sage/90 shadow-md">閉じる</button>
+                <button onclick="closeDetailModal()" class="w-full py-2.5 rounded-full text-xs font-bold text-white bg-sage hover:bg-sage/90 shadow-md">保存して閉じる</button>
             </div>
         </div>
     </div>
 
-    <!-- App Logic & Autocomplete Candidate Preset JSON Database -->
+    <!-- Application Script Logic -->
     <script>
-        // Pre-defined JSON Database for Auto-Suggestions
+        // Preset Auto-suggestion database
         const presetCandidates = [
-            { title: '葬送のフリーレン', vol: 13, genre: 'マンガ', desc: '魔王を討伐した勇者一行の後日譚ファンタジー。心温まる冒険譚！', color: '#7C9070' },
-            { title: 'SPY×FAMILY', vol: 13, genre: 'マンガ', desc: '名門校潜入のために偽りの家族を形成するスパイコメディ。', color: '#E5A97D' },
-            { title: '呪術廻戦', vol: 26, genre: 'マンガ', desc: '驚異的な身体能力を持つ高校生・虎杖悠仁の呪術バトル物語。', color: '#4A3E3D' },
-            { title: 'ダンジョン飯', vol: 14, genre: 'マンガ', desc: '迷宮のモンスターを美味しく調理して進む冒険グルメ劇！', color: '#C08552' },
-            { title: '薬屋のひとりごと', vol: 13, genre: 'マンガ', desc: '後宮の毒味役マオマオが様々な難事件を鮮やかに解き明かす。', color: '#5B8266' },
-            { title: 'ハイキュー!!', vol: 45, genre: 'マンガ', desc: '「頂の景色」を目指す熱血青春バレーボール作品！', color: '#D97736' },
-            { title: 'チェンソーマン', vol: 17, genre: 'マンガ', desc: 'チェンソーの悪魔に変身するデンジのダークヒーローアクション。', color: '#9B4844' },
-            { title: 'ONE PIECE', vol: 108, genre: 'マンガ', desc: 'ひとつなぎの大秘宝を巡るルフィたちの壮大な海賊ロマン。', color: '#2D6A4F' },
-            { title: '推しの子', vol: 14, genre: 'マンガ', desc: '転生×芸能界のサスペンスと熱いエンタメドラマ。', color: '#A3485E' },
-            { title: '僕のヒーローアカデミア', vol: 40, genre: 'マンガ', desc: '無個性の少年が最高のヒーローへと成長していく超王道学園譚。', color: '#3B6E8C' },
-            { title: 'アオのハコ', vol: 15, genre: 'マンガ', desc: '部活動に打ち込む高校生たちの甘酸っぱい爽やかラブストーリー。', color: '#6B9080' },
-            { title: '怪獣8号', vol: 12, genre: 'マンガ', desc: '怪獣に変身するおじさんが防衛隊で仲間とともに戦う！', color: '#A44A4A' },
-            { title: 'チ。―地球の運動―', vol: 8, genre: 'マンガ', desc: '知性と真理のために命を懸けて地動説を繋ぐ名作。', color: '#D4A373' },
-            { title: 'ブルーロック', vol: 28, genre: 'マンガ', desc: '世界一のエゴイストストライカーを育成する極限サッカー。', color: '#457B9D' },
-            { title: 'キングダム', vol: 71, genre: 'マンガ', desc: '中華統一を目指す少年・信と後の始皇帝・政の大河戦国大作！', color: '#8C533E' },
-            { title: '名探偵コナン', vol: 104, genre: 'マンガ', desc: '身体は縮んでも頭脳は同じ！難事件を次々解決する推理マンガ。', color: '#3A5A40' },
-            { title: '変な家', vol: 2, genre: '小説', desc: '間取り図の謎から浮かびあがる恐ろしい事実を描くミステリー。', color: '#3D405B' },
-            { title: '成瀬は天下を取りにいく', vol: 1, genre: '小説', desc: '本屋大賞受賞！滋賀県大津市を舞台にした最高の青春小説。', color: '#F4A261' },
-            { title: 'プロジェクト・ヘイル・メアリー', vol: 2, genre: '小説', desc: '地球滅亡の危機を救うため宇宙へ旅立つ感動のSF金字塔。', color: '#2A9D8F' },
-            { title: 'Tailwind CSS実践ガイド', vol: 1, genre: '実用・技術', desc: '効率的なモダンWebデザインとUI構築のベストプラクティス。', color: '#0077B6' }
+            { title: '名探偵コナン', maxVol: 105, genre: 'マンガ', ownedStr: '1-105', desc: '見た目は子供、頭脳は大人！難事件を解き明かす名作。', color: '#88A47C' },
+            { title: '葬送のフリーレン', maxVol: 13, genre: 'マンガ', desc: '魔王討伐後の勇者一行の後日譚を描くファンタジー。', color: '#FF9AA2' },
+            { title: 'SPY×FAMILY', maxVol: 13, genre: 'マンガ', desc: '仮初めの家族が織りなすスパイアクション＆コメディ。', color: '#B5EAD7' },
+            { title: '呪術廻戦', maxVol: 27, genre: 'マンガ', desc: '呪いを巡る壮絶な戦いを描くダークファンタジー。', color: '#8D6242' },
+            { title: 'ダンジョン飯', maxVol: 14, genre: 'マンガ', desc: 'モンスターを調理して食べる迷宮グルメアドベンチャー。', color: '#E8C5A8' },
+            { title: '薬屋のひとりごと', maxVol: 13, genre: 'マンガ', desc: '後宮の毒味役が難事件を解決するミステリー。', color: '#C7CEEA' },
+            { title: '変な家', maxVol: 2, genre: '小説', desc: '間取り図に隠された恐ろしい真相に迫る話題作。', color: '#8D6242' },
+            { title: 'ONE PIECE', maxVol: 108, genre: 'マンガ', desc: '大海賊時代を舞台にルフィが海賊王を目指す大冒険！', color: '#FF9AA2' }
         ];
 
-        // User's Local Storage Bookshelf State
         let books = JSON.parse(localStorage.getItem('house_shelf_user_books')) || [];
         let activeBookId = null;
         let activeGenreFilter = 'all';
@@ -420,18 +481,75 @@
             localStorage.setItem('house_shelf_user_books', JSON.stringify(books));
         }
 
+        // Helper: Parse range input like "1-5, 7, 9-12" into Set of numbers
+        function parseOwnedVolumes(str, maxVol) {
+            const owned = new Set();
+            if (!str || str.trim() === '') {
+                for (let i = 1; i <= maxVol; i++) owned.add(i);
+                return owned;
+            }
+
+            const parts = str.split(/[,、\s]+/);
+            parts.forEach(part => {
+                if (part.includes('-') || part.includes('〜')) {
+                    const [start, end] = part.split(/[-〜]/).map(n => parseInt(n.trim()));
+                    if (!isNaN(start) && !isNaN(end)) {
+                        for (let i = Math.min(start, end); i <= Math.max(start, end); i++) {
+                            if (i <= maxVol) owned.add(i);
+                        }
+                    }
+                } else {
+                    const num = parseInt(part.trim());
+                    if (!isNaN(num) && num <= maxVol) owned.add(num);
+                }
+            });
+            return owned;
+        }
+
+        // Format Set back into clean range string (e.g., "1-6, 8-10")
+        function formatOwnedRange(ownedSet, maxVol) {
+            const arr = Array.from(ownedSet).sort((a, b) => a - b);
+            if (arr.length === 0) return '持っている巻なし';
+            if (arr.length === maxVol) return `1〜${maxVol}巻 (全巻所持)`;
+
+            let result = [];
+            let start = arr[0];
+            let prev = arr[0];
+
+            for (let i = 1; i <= arr.length; i++) {
+                if (i < arr.length && arr[i] === prev + 1) {
+                    prev = arr[i];
+                } else {
+                    if (start === prev) result.push(`${start}巻`);
+                    else result.push(`${start}-${prev}巻`);
+                    if (i < arr.length) {
+                        start = arr[i];
+                        prev = arr[i];
+                    }
+                }
+            }
+            return result.join(', ');
+        }
+
+        // Find missing volumes array
+        function getMissingVolumes(ownedSet, maxVol) {
+            const missing = [];
+            for (let i = 1; i <= maxVol; i++) {
+                if (!ownedSet.has(i)) missing.push(i);
+            }
+            return missing;
+        }
+
         function renderBookshelf() {
             const query = document.getElementById('app-search').value.toLowerCase().trim();
             const tiers = [
                 document.getElementById('tier-1'),
                 document.getElementById('tier-2'),
-                document.getElementById('tier-3'),
-                document.getElementById('tier-4')
+                document.getElementById('tier-3')
             ];
             const emptyNotice = document.getElementById('empty-shelf-notice');
             const activeCard = document.getElementById('active-book-card');
 
-            // Clear tiers
             tiers.forEach(t => t.innerHTML = '');
 
             if (books.length === 0) {
@@ -443,7 +561,6 @@
                 activeCard.classList.remove('hidden');
             }
 
-            // Filter books
             const filtered = books.filter(b => {
                 const matchQuery = b.title.toLowerCase().includes(query) || b.genre.toLowerCase().includes(query);
                 const matchGenre = activeGenreFilter === 'all' || b.genre === activeGenreFilter;
@@ -451,20 +568,23 @@
             });
 
             filtered.forEach((book, idx) => {
-                const tierIndex = idx % 4;
+                const tierIndex = idx % 3;
                 const isSelected = book.id === activeBookId;
                 const isMatchSearch = query !== '' && book.title.toLowerCase().includes(query);
 
                 const spine = document.createElement('div');
-                spine.className = `book-spine flex-shrink-0 flex flex-col justify-between p-1.5 ${isSelected ? 'pulled-out' : ''} ${isMatchSearch ? 'highlighted' : ''}`;
-                spine.style.backgroundColor = book.color || '#7C9070';
-                spine.style.width = `${Math.min(book.width || 44, 60)}px`;
-                spine.style.height = `${Math.min(book.height || 200, 220)}px`;
+                spine.className = `book-spine flex flex-col justify-between p-1.5 ${isSelected ? 'pulled-out' : ''} ${isMatchSearch ? 'highlighted' : ''}`;
+                spine.style.backgroundColor = book.color || '#88A47C';
+                spine.style.width = `${Math.min(book.width || 38, 48)}px`;
+                spine.style.height = `${Math.min(book.height || 140, 155)}px`; // Fixed height range fits neatly inside shelf
                 spine.onclick = () => selectBook(book.id);
 
+                const ownedSet = new Set(book.ownedArray || []);
+                const missing = getMissingVolumes(ownedSet, book.maxVol || 1);
+
                 spine.innerHTML = `
-                    <span class="writing-vertical font-rounded font-bold text-[10px] sm:text-xs tracking-widest mx-auto mt-1 text-white">${book.title}</span>
-                    <span class="font-rounded font-black text-[9px] sm:text-[11px] text-center bg-white/20 text-white rounded py-0.5">${book.vol}巻</span>
+                    <span class="writing-vertical font-cute font-bold text-[10px] sm:text-xs tracking-wider mx-auto mt-1 text-white">${book.title}</span>
+                    <span class="font-bold text-[9px] text-center bg-black/25 text-white rounded py-0.5">${book.ownedArray ? book.ownedArray.length : 1}冊</span>
                 `;
 
                 tiers[tierIndex].appendChild(spine);
@@ -476,37 +596,77 @@
             const book = books.find(b => b.id === id);
             if (!book) return;
 
-            document.getElementById('active-title').innerText = book.title;
-            document.getElementById('active-vol').innerText = `${book.vol}巻`;
-            document.getElementById('active-vol-count').innerText = book.vol;
-            document.getElementById('active-genre').innerText = book.genre;
-            document.getElementById('active-date').innerText = `購入: ${book.date || '未登録'}`;
-            document.getElementById('active-desc').innerText = book.desc || 'メモ未登録';
-            document.getElementById('active-badge').style.backgroundColor = book.color || '#7C9070';
+            const ownedSet = new Set(book.ownedArray || []);
+            const missing = getMissingVolumes(ownedSet, book.maxVol || 1);
+            const rangeStr = formatOwnedRange(ownedSet, book.maxVol || 1);
 
-            // Update modal details
+            document.getElementById('active-title').innerText = book.title;
+            document.getElementById('active-vol-summary').innerText = `${ownedSet.size}/${book.maxVol || 1}冊`;
+            document.getElementById('active-genre').innerText = book.genre;
+            document.getElementById('active-date').innerText = `登録: ${book.date || '未設定'}`;
+            document.getElementById('active-owned-list').innerText = rangeStr;
+            document.getElementById('active-badge').style.backgroundColor = book.color || '#88A47C';
+
+            const missingAlert = document.getElementById('active-missing-alert');
+            if (missing.length > 0) {
+                missingAlert.classList.remove('hidden');
+                document.getElementById('active-missing-text').innerText = `【抜け巻アリ】 ${missing.join(', ')}巻を未持参！`;
+            } else {
+                missingAlert.classList.add('hidden');
+            }
+
+            // Update Detail Modal
             document.getElementById('detail-title').innerText = book.title;
-            document.getElementById('detail-vol').innerText = book.vol;
             document.getElementById('detail-genre').innerText = book.genre;
             document.getElementById('detail-date').innerText = book.date || '未登録';
             document.getElementById('detail-release').innerText = book.release || '未登録';
             document.getElementById('detail-desc').innerText = book.desc || 'メモ未登録';
 
+            const detailBadge = document.getElementById('detail-missing-badge');
+            if (missing.length > 0) {
+                detailBadge.innerText = `⚠️ 抜け巻: ${missing.join(', ')}巻を持っていません`;
+                detailBadge.className = "inline-block text-xs font-bold text-rose-500 bg-rose-50 px-3 py-1 rounded-full border border-rose-200";
+            } else {
+                detailBadge.innerText = `✨ 1〜${book.maxVol}巻までコンプリート！`;
+                detailBadge.className = "inline-block text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200";
+            }
+
+            renderVolumeGrid(book);
             renderBookshelf();
         }
 
-        // Fast volume increment / decrement (+/-)
-        function adjustVolume(delta) {
-            if (!activeBookId) return;
-            const book = books.find(b => b.id === activeBookId);
-            if (book) {
-                book.vol = Math.max(1, (book.vol || 1) + delta);
-                saveBooks();
-                selectBook(book.id);
+        // Render checklist grid for ADHD / Missing volume toggles
+        function renderVolumeGrid(book) {
+            const container = document.getElementById('volume-grid-container');
+            container.innerHTML = '';
+            const ownedSet = new Set(book.ownedArray || []);
+
+            for (let v = 1; v <= (book.maxVol || 1); v++) {
+                const isOwned = ownedSet.has(v);
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = `
+                    <input type="checkbox" id="vol-chk-${v}" ${isOwned ? 'checked' : ''} class="vol-checkbox hidden" onchange="toggleVolume(${book.id}, ${v}, this.checked)">
+                    <label for="vol-chk-${v}" class="flex items-center justify-center h-8 rounded-lg border border-woodLight/40 text-xs text-warmBrown/70 cursor-pointer transition-all select-none bg-white">
+                        ${v}
+                    </label>
+                `;
+                container.appendChild(wrapper);
             }
         }
 
-        // Autocomplete Candidate Search Suggestion Handler
+        function toggleVolume(bookId, volNum, isChecked) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+
+            let ownedSet = new Set(book.ownedArray || []);
+            if (isChecked) ownedSet.add(volNum);
+            else ownedSet.delete(volNum);
+
+            book.ownedArray = Array.from(ownedSet);
+            saveBooks();
+            selectBook(bookId);
+        }
+
         function onTitleInput(text) {
             const suggestBox = document.getElementById('suggest-box');
             const val = text.toLowerCase().trim();
@@ -518,7 +678,6 @@
             }
 
             const matches = presetCandidates.filter(c => c.title.toLowerCase().includes(val));
-
             if (matches.length === 0) {
                 suggestBox.classList.add('hidden');
                 return;
@@ -526,20 +685,20 @@
 
             matches.forEach(m => {
                 const item = document.createElement('div');
-                item.className = 'suggest-item p-3 cursor-pointer transition-colors flex items-center justify-between text-xs text-warmBrown';
+                item.className = 'p-2.5 hover:bg-pastelCream cursor-pointer transition-colors flex items-center justify-between text-xs text-warmBrown';
                 item.innerHTML = `
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full" style="background-color: ${m.color}"></span>
                         <span class="font-bold">${m.title}</span>
                     </div>
-                    <span class="text-[10px] text-warmBrown/60 bg-cream border border-woodLight/20 px-2 py-0.5 rounded-full">全${m.vol}巻目安</span>
+                    <span class="text-[10px] text-warmBrown/60">全${m.maxVol}巻目安</span>
                 `;
                 item.onclick = () => {
                     document.getElementById('form-title').value = m.title;
-                    document.getElementById('form-vol').value = m.vol;
+                    document.getElementById('form-max-vol').value = m.maxVol;
                     document.getElementById('form-genre').value = m.genre;
                     document.getElementById('form-desc').value = m.desc;
-                    document.getElementById('form-title').setAttribute('data-color', m.color);
+                    document.getElementById('form-owned-range').value = m.ownedStr || `1-${m.maxVol}`;
                     suggestBox.classList.add('hidden');
                 };
                 suggestBox.appendChild(item);
@@ -549,10 +708,6 @@
         }
 
         function filterBookshelf() {
-            const query = document.getElementById('app-search').value.trim();
-            const countBanner = document.getElementById('search-count');
-            if (query !== '') countBanner.classList.remove('hidden');
-            else countBanner.classList.add('hidden');
             renderBookshelf();
         }
 
@@ -564,7 +719,7 @@
         function setGenreFilter(genre, btn) {
             activeGenreFilter = genre;
             document.querySelectorAll('.genre-tab').forEach(t => {
-                t.className = 'genre-tab bg-creamDark text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0';
+                t.className = 'genre-tab bg-pastelCream text-warmBrown/70 hover:text-warmBrown text-xs font-bold px-3.5 py-2 rounded-full border border-woodLight/30 transition-all flex-shrink-0';
             });
             btn.className = 'genre-tab bg-sage text-white text-xs font-bold px-3.5 py-2 rounded-full transition-all flex-shrink-0';
             renderBookshelf();
@@ -589,29 +744,31 @@
 
         function submitNewBook(e) {
             e.preventDefault();
-            const titleInput = document.getElementById('form-title');
-            const title = titleInput.value.trim();
-            const vol = parseInt(document.getElementById('form-vol').value) || 1;
+            const title = document.getElementById('form-title').value.trim();
+            const maxVol = parseInt(document.getElementById('form-max-vol').value) || 1;
             const genre = document.getElementById('form-genre').value;
+            const rangeStr = document.getElementById('form-owned-range').value;
             const date = document.getElementById('form-date').value || new Date().toISOString().split('T')[0];
             const release = document.getElementById('form-release').value;
             const desc = document.getElementById('form-desc').value.trim();
-            const customColor = titleInput.getAttribute('data-color');
 
-            const presetColors = ['#7C9070', '#E5A97D', '#5B8266', '#C08552', '#3B6E8C', '#A3485E', '#D97736'];
-            const randomColor = customColor || presetColors[Math.floor(Math.random() * presetColors.length)];
+            const selectedColorObj = document.querySelector('input[name="spineColor"]:checked');
+            const color = selectedColorObj ? selectedColorObj.value : '#88A47C';
+
+            const ownedSet = parseOwnedVolumes(rangeStr, maxVol);
 
             const newBook = {
                 id: Date.now(),
                 title,
-                vol,
+                maxVol,
+                ownedArray: Array.from(ownedSet),
                 genre,
                 date,
                 release,
-                desc: desc || `${title}の蔵書メモ`,
-                color: randomColor,
-                width: Math.floor(Math.random() * 15) + 40,
-                height: Math.floor(Math.random() * 30) + 190
+                desc,
+                color,
+                width: Math.floor(Math.random() * 10) + 36,
+                height: Math.floor(Math.random() * 15) + 138
             };
 
             books.unshift(newBook);
@@ -620,16 +777,15 @@
             selectBook(newBook.id);
 
             // Reset form
-            titleInput.value = '';
-            titleInput.removeAttribute('data-color');
-            document.getElementById('form-vol').value = '';
+            document.getElementById('form-title').value = '';
+            document.getElementById('form-owned-range').value = '';
             document.getElementById('form-desc').value = '';
         }
 
         function removeActiveBook() {
             if (!activeBookId) return;
             const book = books.find(b => b.id === activeBookId);
-            if (confirm(`「${book.title}」を本棚から取り除きますか？`)) {
+            if (confirm(`「${book.title}」を本棚から削除しますか？`)) {
                 books = books.filter(b => b.id !== activeBookId);
                 saveBooks();
                 if (books.length > 0) {
